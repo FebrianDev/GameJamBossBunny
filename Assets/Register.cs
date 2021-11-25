@@ -62,7 +62,8 @@ public class Register : MonoBehaviour
         if (NameCheck() && PwdCheck())
         {
             var id = UserId();
-            var user = new DataUser(id, name.text, pwd.text, 0, 0, false, false);
+            var user = new DataUser(id, name.text, pwd.text, 0, 0,
+                false, false, false, false, 0, 0, 0, 0);
             var json = JsonUtility.ToJson(user);
             reference.Child("Users").Child(id).SetRawJsonValueAsync(json);
             print("Success");
@@ -83,7 +84,7 @@ public class Register : MonoBehaviour
             return true;
         }
 
-        var message = "Password Harus Diisi";
+        var message = "Password Must Be Filled!";
         errPwd.text = message;
         print(message);
 
@@ -98,16 +99,16 @@ public class Register : MonoBehaviour
             return true;
         }
 
-        else if (nameExist == name.text)
+        else if (""== name.text)
         {
-            var message = "Username Sudah Ada!";
+            var message = "Username Must Be Filled!";   
             print(message);
             errName.text = message;
             return false;
         }
         else
         {
-            var message = "Username Harus Diisi!";
+            var message = "Username Has Been Used!";
             print(message);
             errName.text = message;
             return false;
