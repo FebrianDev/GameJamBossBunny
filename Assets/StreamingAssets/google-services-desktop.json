@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "1047730773159",
+    "firebase_url": "https://gamejambossbunny-default-rtdb.firebaseio.com",
+    "project_id": "gamejambossbunny",
+    "storage_bucket": "gamejambossbunny.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1047730773159:android:4c4d7983186ebe41d98f82",
+        "android_client_info": {
+          "package_name": "com.deltasquad.gamejambossbunny"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1047730773159-q1jqm4pbp0a72nobiktbcn65ttootp4b.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBB9fAcUjgc0vpkBoXmmerCMG-0uYq-F3o"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1047730773159-q1jqm4pbp0a72nobiktbcn65ttootp4b.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
