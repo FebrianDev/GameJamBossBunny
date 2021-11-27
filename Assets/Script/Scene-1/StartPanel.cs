@@ -11,11 +11,16 @@ public class StartPanel : MonoBehaviourPunCallbacks
     [SerializeField] private Text roomName;
     [SerializeField] private Text playerInRoom;
 
+    // Game Manager
+    private GameManager manager;
+
    
     void Start()
     {
+        manager = FindObjectOfType<GameManager>();
+
         // Only room owner can start the game
-        if (PhotonNetwork.IsMasterClient && PhotonNetwork.CurrentRoom.PlayerCount >= 2)
+        if (PhotonNetwork.IsMasterClient)
         {
             startButton.SetActive(true);
         }
@@ -48,7 +53,13 @@ public class StartPanel : MonoBehaviourPunCallbacks
     public void StartGames()
     {
         // Spawn Player
-        FindObjectOfType<GameManager>().SpawnPlayer();
+        manager.SpawnPlayer();
+
+        // Set first king
+        manager.SetFirstKing();
+
+        // Start Games
+        manager.StartGames();
 
         // Close panel
         gameObject.SetActive(false);

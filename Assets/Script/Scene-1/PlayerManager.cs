@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using Photon.Pun;
+using Photon.Realtime;
 
 public class PlayerManager : MonoBehaviourPunCallbacks
 {
@@ -14,6 +15,7 @@ public class PlayerManager : MonoBehaviourPunCallbacks
     [SerializeField] private float moveSpeed;
     [SerializeField] private float jumpForce;
     public bool isJump { get; private set; }
+    public bool onGround { get; private set; }
     private bool isFacingRight = true;
 
     // This player Rigid Body
@@ -22,23 +24,45 @@ public class PlayerManager : MonoBehaviourPunCallbacks
     // Manager
     GameManager manager;
 
+    // ID
+    public int ID { get; set; }
+
     // Hit Method
     [SerializeField] private Transform hitPos;
     private float hitRange = .5f;
     [SerializeField] private LayerMask playerLayerMask;
-    private float hitForce = 2000;
+    private float hitForce = 3000;
+    private bool getHit;
     private float hitCooldownTime = 1.5f;
     private float hitCountdown;
     private bool hitIsCooldown;
 
     // King Mechanic
     private float MaxKingTime = 60f;
-    public bool IsKing { get; set; }
+    public bool IsKing { get; private set; }
     public float kingTime { get; private set; }
+
+    // Player UI
+    PlayerUIGroub uIGroub;
 
     void Start()
     {
+        onGround = true;
         manager = FindObjectOfType<GameManager>();
+
+        // Set data
+        kingTime = 0;
+
+        // Set UI
+        GameObject uiTemp = manager.PlayersUI[ID - 1];
+        uiTemp.SetActive(true);
+        uIGroub = uiTemp.GetComponent<PlayerUIGroub>();
+        uIGroub.playerNameText.text = photonView.Owner.NickName;
+        uIGroub.kingLogo.SetActive(false);
+        uIGroub.kingProgressText.text = "0 %";
+        uIGroub.kingProgressSlider.value = 0;
+
+
 
         if (photonView.IsMine)
         {
@@ -68,7 +92,8 @@ public class PlayerManager : MonoBehaviourPunCallbacks
     
     void Update()
     {
-        if (photonView.IsMine)
+        // Only local player
+        if (photonView.IsMine && !getHit)
         {
             // Player Movement
             if (isJoystick)
@@ -112,18 +137,43 @@ public class PlayerManager : MonoBehaviourPunCallbacks
             if (!isJump && jumpButton.isPressed)
             {
                 isJump = true;
+                onGround = false;
                 rigidbody.AddForce(new Vector2(0, jumpForce));
             }
             // Player Hit
             if (hitButton.isPressed)
             {
-                HitPlayer();
+                HitPlayerOnline();
             }
         }
+
+        // Set UI
+        if (IsKing && GameManager.GameIsRolling)
+        {
+            uIGroub.kingLogo.SetActive(true);
+            kingTime += Time.deltaTime;
+        }
+        else if (!IsKing)
+        {
+            uIGroub.kingLogo.SetActive(false);
+        }
+        uIGroub.kingProgressSlider.value = kingTime / MaxKingTime;
+        uIGroub.kingProgressText.text = (kingTime / MaxKingTime * 100).ToString("F0") + " %";
         
+        // Check king value
+        if(kingTime >= MaxKingTime)
+        {
+            // End games
+
+        }
     }
 
     // Hit Player
+    public void HitPlayerOnline()
+    {
+        photonView.RPC("HitPlayer", RpcTarget.All);
+    }
+    [PunRPC]
     public void HitPlayer()
     {
         if (!hitIsCooldown)
@@ -137,7 +187,13 @@ public class PlayerManager : MonoBehaviourPunCallbacks
             {
                 if(target.attachedRigidbody != rigidbody)
                 {
+                    // Push them
                     target.GetComponent<Rigidbody2D>().AddForce(new Vector2(hitForce, 0));
+                    target.GetComponent<PlayerManager>().GetHit();
+
+                    // Take the King
+                    target.GetComponent<PlayerManager>().ResetFromKing();
+                    SetToKing();
                 }
             }
 
@@ -161,7 +217,36 @@ public class PlayerManager : MonoBehaviourPunCallbacks
             }
         }   
     }
+    public void GetHit()
+    {
+        getHit = true;
+        StartCoroutine(GetHitCooldown());
+    }
+    private IEnumerator GetHitCooldown()
+    {
+        yield return new WaitForSeconds(.5f);
+        getHit = false;
+    }
     
+    // King method
+    public void SetToKingOnline()
+    {
+        photonView.RPC("SetToKing", RpcTarget.All);
+    }
+    [PunRPC]
+    public void SetToKing()
+    {
+        IsKing = true;
+    }
+    public void ResetFromKingOnline()
+    {
+        photonView.RPC("ResetFromKing", RpcTarget.All);
+    }
+    [PunRPC]
+    public void ResetFromKing()
+    {
+        IsKing = false;
+    }
 
     // Detect Collision -------------------------------------------------------------------------------------------
     private void OnTriggerEnter2D(Collider2D collision)
@@ -174,11 +259,14 @@ public class PlayerManager : MonoBehaviourPunCallbacks
         // Only call this if this player is local
         if (collision.collider.tag == "PlayerHead")
         {
-            Debug.Log("Player Kill");
+            // Take the King
+            collision.collider.GetComponent<PlayerManager>().ResetFromKingOnline();
+            SetToKingOnline();
         }
         else if (collision.collider.tag == "Platform")
         {
             isJump = false;
+            onGround = true;
         }
     }
 }
