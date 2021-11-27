@@ -30,7 +30,7 @@ public class MainMenuManager : MonoBehaviourPunCallbacks
         }
 
         // Set Max Player
-        MaxPlayerInRoom = 5;
+        MaxPlayerInRoom = 4;
 
         // Setting UI
         SelectController();
@@ -96,7 +96,7 @@ public class MainMenuManager : MonoBehaviourPunCallbacks
     public override void OnJoinedRoom()
     {
         // Load Game Scene
-        SceneManager.LoadScene(1);
+        SceneManager.LoadScene("Scene-1_Gameplay");
         // Debugging
         Debug.Log("Joined to Room " + PhotonNetwork.CurrentRoom.Name);
     }

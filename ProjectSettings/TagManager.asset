@@ -6,6 +6,7 @@ TagManager:
   tags:
   - PlayerHead
   - Platform
+  - BoingBoingJump
   layers:
   - Default
   - TransparentFX

@@ -6,15 +6,23 @@ using Photon.Pun;
 
 public class StartPanel : MonoBehaviourPunCallbacks
 {
-    // Ui Text
+    // Ui
+    [SerializeField] private GameObject startButton;
     [SerializeField] private Text roomName;
     [SerializeField] private Text playerInRoom;
 
    
     void Start()
     {
-        
-
+        // Only room owner can start the game
+        if (PhotonNetwork.IsMasterClient && PhotonNetwork.CurrentRoom.PlayerCount >= 2)
+        {
+            startButton.SetActive(true);
+        }
+        else
+        {
+            startButton.SetActive(false);
+        }
     }
 
     
@@ -25,7 +33,7 @@ public class StartPanel : MonoBehaviourPunCallbacks
         roomName.text = "Room Name : " + PhotonNetwork.CurrentRoom.Name;
     }
 
-    public void StartButton()
+    public void StartButtonMethod()
     {
         // Start The Games
         photonView.RPC("StartGames", RpcTarget.All);
