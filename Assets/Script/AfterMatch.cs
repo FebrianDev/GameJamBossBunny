@@ -70,19 +70,19 @@ public class AfterMatch : MonoBehaviour
     public void UploadDataPlayerToFirebase(AfterMatchData data)
     {
         var reference = FirebaseDatabase.DefaultInstance.GetReference("Users").Child(id);
-        reference.Child("score").SetValueAsync(score + data.kingTime);
-        reference.Child("win").SetValueAsync(win + data.win);
-        reference.Child("lose").SetValueAsync(lose + data.lose);
-        reference.Child("match").SetValueAsync(match + data.match);
-        reference.Child("winRate").SetValueAsync(((win + data.win) / (match + data.match)) * 100);
+        reference.Child("score").SetValueAsync(score + AfterMatchData.kingTime);
+        reference.Child("win").SetValueAsync(win + AfterMatchData.win);
+        reference.Child("lose").SetValueAsync(lose + AfterMatchData.lose);
+        reference.Child("match").SetValueAsync(match + AfterMatchData.match);
+        reference.Child("winRate").SetValueAsync(((win + AfterMatchData.win) / (match + AfterMatchData.lose)) * 100);
     }
 
     public void UploadHistoryPlayer(AfterMatchData data)
     {
         var reference = FirebaseDatabase.DefaultInstance.GetReference("Histories").Child(id).Child("his"+Random.Range(0,1000)+"tory" + Random.Range(0,1000000));
-        reference.Child("name").SetValueAsync(data.playerName);
-        reference.Child("score").SetValueAsync(data.kingTime);
-        reference.Child("win").SetValueAsync(data.win);
+        reference.Child("name").SetValueAsync(AfterMatchData.playerName);
+        reference.Child("score").SetValueAsync(AfterMatchData.kingTime);
+        reference.Child("win").SetValueAsync(AfterMatchData.win);
     }
 
     

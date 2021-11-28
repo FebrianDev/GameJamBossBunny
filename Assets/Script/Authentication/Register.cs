@@ -68,6 +68,7 @@ public class Register : MonoBehaviour
             reference.Child("Users").Child(id).SetRawJsonValueAsync(json);
             print("Success");
             PlayerPrefs.SetString(Constant.KEY_NAME, name.text);
+            PlayerPrefs.SetString(Constant.KEY_ID, id);
             SceneManager.LoadScene("MainMenu");
         }
         else

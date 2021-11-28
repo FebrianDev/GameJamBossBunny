@@ -276,19 +276,19 @@ public class PlayerManager : MonoBehaviourPunCallbacks
         {
             // Build the data
             AfterMatchData afterMatch = new AfterMatchData();
-            afterMatch.playerName = photonView.Owner.NickName;
-            afterMatch.kingTime = kingTime;
+            AfterMatchData.playerName = photonView.Owner.NickName;
+            AfterMatchData .kingTime = kingTime;
             if (manager.AmIWin(photonView.Owner.NickName))
             {
-                afterMatch.win = 1;
-                afterMatch.lose = 0;
+                AfterMatchData .win = 1;
+                AfterMatchData .lose = 0;
             }
             else
             {
-                afterMatch.win = 0;
-                afterMatch.lose = 1;
+                AfterMatchData .win = 0;
+                AfterMatchData .lose = 1;
             }
-            afterMatch.match = 1;
+            AfterMatchData .match = 1;
 
             // Send the data
             GameManager.afMData = afterMatch;

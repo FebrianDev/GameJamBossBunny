@@ -1,8 +1,8 @@
 ﻿public class AfterMatchData
 {
-    public string playerName;
-    public float kingTime; // Score
-    public int win;
-    public int lose;
-    public int match;
+    public static string playerName;
+    public static float kingTime; // Score
+    public static int win;
+    public static int lose;
+    public static int match;
 }

@@ -27,6 +27,7 @@ public class Login : MonoBehaviour
         {
             foreach (var childSnapshot in e2.Snapshot.Children)
             {
+                var id = childSnapshot.Child("id").Value.ToString();
                 nameExist = childSnapshot.Child("name").Value.ToString();
                 pwdExist = childSnapshot.Child("password").Value.ToString();
 
@@ -38,6 +39,7 @@ public class Login : MonoBehaviour
                     {
                         err.text = "";
                         PlayerPrefs.SetString(Constant.KEY_NAME, name.text);
+                        PlayerPrefs.SetString(Constant.KEY_ID, id);
                         SceneManager.LoadScene("MainMenu");
                     }
                     else
