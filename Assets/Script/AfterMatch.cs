@@ -21,22 +21,22 @@ public class AfterMatch : MonoBehaviour
     private int dummyWin = 1;
     private int dummyLose = 0;
     private int dummyMatch = 1;
-    
+
     #endregion
+
+    public static AfterMatchData data;
 
     void Start()
     {
-        
         //dummyName
-        dummyName = PlayerPrefs.GetString(Constant.KEY_NAME);
+        //dummyName = PlayerPrefs.GetString(Constant.KEY_NAME);
         
         FirebaseDatabase.DefaultInstance
             .GetReference("Users")
             .ValueChanged += GetUser;
 
-
         //Test Demo
-        StartCoroutine("Upload");
+        StartCoroutine(Upload());
     }
 
     private void GetUser(object sender2, ValueChangedEventArgs e2)
@@ -67,22 +67,22 @@ public class AfterMatch : MonoBehaviour
         }
     }
 
-    private void UploadDataPlayerToFirebase()
+    public void UploadDataPlayerToFirebase(AfterMatchData data)
     {
         var reference = FirebaseDatabase.DefaultInstance.GetReference("Users").Child(id);
-        reference.Child("score").SetValueAsync(score + dummyScore);
-        reference.Child("win").SetValueAsync(win + dummyWin);
-        reference.Child("lose").SetValueAsync(lose + dummyLose);
-        reference.Child("match").SetValueAsync(match + dummyMatch);
-        reference.Child("winRate").SetValueAsync(((win + dummyWin) / (match + dummyMatch)) * 100);
+        reference.Child("score").SetValueAsync(score + data.kingTime);
+        reference.Child("win").SetValueAsync(win + data.win);
+        reference.Child("lose").SetValueAsync(lose + data.lose);
+        reference.Child("match").SetValueAsync(match + data.match);
+        reference.Child("winRate").SetValueAsync(((win + data.win) / (match + data.match)) * 100);
     }
 
-    private void UploadHistoryPlayer()
+    public void UploadHistoryPlayer(AfterMatchData data)
     {
         var reference = FirebaseDatabase.DefaultInstance.GetReference("Histories").Child(id).Child("his"+Random.Range(0,1000)+"tory" + Random.Range(0,1000000));
-        reference.Child("name").SetValueAsync(name);
-        reference.Child("score").SetValueAsync(dummyScore);
-        reference.Child("win").SetValueAsync(dummyWin);
+        reference.Child("name").SetValueAsync(data.playerName);
+        reference.Child("score").SetValueAsync(data.kingTime);
+        reference.Child("win").SetValueAsync(data.win);
     }
 
     
@@ -92,7 +92,7 @@ public class AfterMatch : MonoBehaviour
      {
          yield return new WaitForSeconds(3);
          
-         UploadDataPlayerToFirebase();
-         UploadHistoryPlayer();
+         UploadDataPlayerToFirebase(data);
+         UploadHistoryPlayer(data);
      }
 }

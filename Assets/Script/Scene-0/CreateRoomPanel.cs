@@ -44,7 +44,7 @@ public class CreateRoomPanel : MonoBehaviourPunCallbacks
     // Increment and decrement max player
     public void PlusMaxPlayer()
     {
-        if (maxPlayerCount < 5)
+        if (maxPlayerCount < 4)
         {
             maxPlayerCount++;
             maxPlayer.text = maxPlayerCount.ToString();

@@ -5766,7 +5766,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   inputRoomName: {fileID: 1064956612}
-  createRoomButton: {fileID: 0}
+  createRoomButton: {fileID: 900864223}
   maxPlayer: {fileID: 263197081}
   visibility: {fileID: 987552565}
 --- !u!1 &2140282249

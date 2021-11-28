@@ -4,6 +4,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using Photon.Pun;
 using Photon.Realtime;
+using ExitGames.Client.Photon;
 
 public class PlayerManager : MonoBehaviourPunCallbacks
 {
@@ -38,7 +39,7 @@ public class PlayerManager : MonoBehaviourPunCallbacks
     private bool hitIsCooldown;
 
     // King Mechanic
-    private float MaxKingTime = 60f;
+    private float MaxKingTime = 3f;
     public bool IsKing { get; private set; }
     public float kingTime { get; private set; }
 
@@ -61,8 +62,6 @@ public class PlayerManager : MonoBehaviourPunCallbacks
         uIGroub.kingLogo.SetActive(false);
         uIGroub.kingProgressText.text = "0 %";
         uIGroub.kingProgressSlider.value = 0;
-
-
 
         if (photonView.IsMine)
         {
@@ -161,10 +160,10 @@ public class PlayerManager : MonoBehaviourPunCallbacks
         uIGroub.kingProgressText.text = (kingTime / MaxKingTime * 100).ToString("F0") + " %";
         
         // Check king value
-        if(kingTime >= MaxKingTime)
+        if(kingTime >= MaxKingTime && GameManager.GameIsRolling)
         {
             // End games
-            manager.GameOver();
+            manager.GameOverOnline();
         }
     }
 
@@ -270,9 +269,41 @@ public class PlayerManager : MonoBehaviourPunCallbacks
         }
     }
 
-    // Get Player Name
-    public string GetName()
+    // Database ---------------------------------------------------------------------------------------------------
+    public void NetworkingClient_EventReceived(EventData photonEvent)
     {
-        return photonView.Owner.NickName;
+        if (photonEvent.Code == GameManager.SEND_DATA_EVENT && photonView.Owner.IsLocal)
+        {
+            // Build the data
+            AfterMatchData afterMatch = new AfterMatchData();
+            afterMatch.playerName = photonView.Owner.NickName;
+            afterMatch.kingTime = kingTime;
+            if (manager.AmIWin(photonView.Owner.NickName))
+            {
+                afterMatch.win = 1;
+                afterMatch.lose = 0;
+            }
+            else
+            {
+                afterMatch.win = 0;
+                afterMatch.lose = 1;
+            }
+            afterMatch.match = 1;
+
+            // Send the data
+            GameManager.afMData = afterMatch;
+            manager.SendDatabase();
+
+            // Debug
+            Debug.Log("Data Sended");
+        }
+    }
+    private void OnEnable()
+    {
+        PhotonNetwork.NetworkingClient.EventReceived += NetworkingClient_EventReceived;
+    }
+    private void OnDisable()
+    {
+        PhotonNetwork.NetworkingClient.EventReceived -= NetworkingClient_EventReceived;
     }
 }

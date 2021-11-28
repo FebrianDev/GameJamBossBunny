@@ -5,6 +5,7 @@ using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 using Photon.Pun;
 using Photon.Realtime;
+using ExitGames.Client.Photon;
 
 public class GameManager : MonoBehaviourPunCallbacks
 {
@@ -32,8 +33,10 @@ public class GameManager : MonoBehaviourPunCallbacks
     public float playTimeCooldown { get; private set; }
     [SerializeField] private Text timerText;
 
-    // After Match
-    public static AfterMatchData[] AfterMatchPlayerRank { get; private set; }
+    // Database
+    public const byte SEND_DATA_EVENT = 77;
+    public static AfterMatchData afMData;
+    [SerializeField] private GameObject dataBaseObject;
 
     void Start()
     {
@@ -60,10 +63,10 @@ public class GameManager : MonoBehaviourPunCallbacks
             playTimeCooldown -= Time.deltaTime;
             ChangeTimeUI(playTimeCooldown, timerText);
         }
-        else if(playTimeCooldown <= 0)
+        else if(playTimeCooldown <= 0 && PhotonNetwork.IsMasterClient)
         {
             // Time out
-            GameOver();
+            GameOverOnline();
         }
     }
 
@@ -132,21 +135,40 @@ public class GameManager : MonoBehaviourPunCallbacks
     }
 
     // Game Over Method
-    public void GameOver()
+    public void GameOverOnline()
     {
+        // Debug
+        Debug.Log("Game is over");
+
         // Stop Game
         photonView.RPC("StopGame", RpcTarget.All);
 
+        // Call every player to send ther data to database
+        RaiseEventOptions eventOptions = new RaiseEventOptions { Receivers = ReceiverGroup.All };
+        PhotonNetwork.RaiseEvent(SEND_DATA_EVENT, null, eventOptions, SendOptions.SendReliable);       
+
+        // Open Gameover Panel
+        photonView.RPC("OpenGameOverPanel", RpcTarget.All);
+    }
+    [PunRPC]
+    public void StopGame()
+    {
+        // Stop the game
+        GameIsRolling = false;
+    }
+    [PunRPC]
+    public void OpenGameOverPanel()
+    {
         // Find all player
-        PlayerManager[] players = FindObjectsOfType<PlayerManager>();
+        PlayerManager[] playersOrder = FindObjectsOfType<PlayerManager>();
         // Sort based on king time
-        for (int i = 0; i < players.Length; i++)
+        for (int i = 0; i < playersOrder.Length; i++)
         {
             var m = i;
 
-            for(int j = i + 1; j < players.Length; j++)
+            for (int j = i + 1; j < playersOrder.Length; j++)
             {
-                if(players[i].kingTime < players[j].kingTime)
+                if (playersOrder[i].kingTime < playersOrder[j].kingTime)
                 {
                     m = j;
                 }
@@ -154,40 +176,59 @@ public class GameManager : MonoBehaviourPunCallbacks
 
             if (m != i)
             {
-                var temp = players[m];
-                players[m] = players[i];
-                players[i] = temp;
+                var temp = playersOrder[m];
+                playersOrder[m] = playersOrder[i];
+                playersOrder[i] = temp;
             }
-        }
-        // Safe it to static var
-        AfterMatchPlayerRank = new AfterMatchData[players.Length];
-        for(int i = 0; i < players.Length; i ++)
-        {
-            AfterMatchPlayerRank[i].playerName = players[i].GetName();
-            AfterMatchPlayerRank[i].kingTime = players[i].kingTime;
-            if(i == 0)
-            {
-                AfterMatchPlayerRank[i].win = 1;
-                AfterMatchPlayerRank[i].lose = 0;
-            }
-            else
-            {
-                AfterMatchPlayerRank[i].win = 0;
-                AfterMatchPlayerRank[i].lose = 1;
-            }
-            AfterMatchPlayerRank[i].match = 1;
         }
 
+        // Open panel
     }
-    [PunRPC]
-    public void StopGame()
+
+    public bool AmIWin(string name)
     {
-        GameIsRolling = false;
+        // Find all player
+        PlayerManager[] playersOrder = FindObjectsOfType<PlayerManager>();
+        // Sort based on king time
+        for (int i = 0; i < playersOrder.Length; i++)
+        {
+            var m = i;
+
+            for (int j = i + 1; j < playersOrder.Length; j++)
+            {
+                if (playersOrder[i].kingTime < playersOrder[j].kingTime)
+                {
+                    m = j;
+                }
+            }
+
+            if (m != i)
+            {
+                var temp = playersOrder[m];
+                playersOrder[m] = playersOrder[i];
+                playersOrder[i] = temp;
+            }
+        }
+
+        if(playersOrder[0].name == name)
+        {
+            return true;
+        }
+        else
+        {
+            return false;
+        }
     }
 
     // Return to play menu
     public void ReturnToPlayMenu()
     {
         SceneManager.LoadScene("Scene-0_PlayMenu");
+    }
+
+    // Database
+    public void SendDatabase()
+    {
+        dataBaseObject.SetActive(true);
     }
 }
