@@ -1,6 +1,8 @@
 ﻿using System;
+using System.Collections;
 using Firebase.Database;
 using UnityEngine;
+using Random = UnityEngine.Random;
 
 public class AfterMatch : MonoBehaviour
 {
@@ -34,7 +36,7 @@ public class AfterMatch : MonoBehaviour
 
 
         //Test Demo
-       // StartCoroutine("Upload");
+        StartCoroutine("Upload");
     }
 
     private void GetUser(object sender2, ValueChangedEventArgs e2)
@@ -77,20 +79,20 @@ public class AfterMatch : MonoBehaviour
 
     private void UploadHistoryPlayer()
     {
-        var reference = FirebaseDatabase.DefaultInstance.GetReference("Histories").Child(id);
+        var reference = FirebaseDatabase.DefaultInstance.GetReference("Histories").Child(id).Child("his"+Random.Range(0,1000)+"tory" + Random.Range(0,1000000));
         reference.Child("name").SetValueAsync(name);
-        reference.Child("score").SetValueAsync(score + dummyScore);
-        reference.Child("win").SetValueAsync(win + dummyWin);
+        reference.Child("score").SetValueAsync(dummyScore);
+        reference.Child("win").SetValueAsync(dummyWin);
     }
 
     
     
-    //Test Demo
-    // IEnumerator Upload()
-    // {
-    //     yield return new WaitForSeconds(3);
-    //     
-    //     UploadDataPlayerToFirebase();
-    //     UploadHistoryPlayer();
-    // }
+   // Test Demo
+     IEnumerator Upload()
+     {
+         yield return new WaitForSeconds(3);
+         
+         UploadDataPlayerToFirebase();
+         UploadHistoryPlayer();
+     }
 }
