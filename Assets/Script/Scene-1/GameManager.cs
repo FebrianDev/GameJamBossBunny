@@ -10,7 +10,9 @@ using ExitGames.Client.Photon;
 public class GameManager : MonoBehaviourPunCallbacks
 {
     // Panels
-    [SerializeField] private GameObject StartPanel;
+    [SerializeField] private GameObject startPanel;
+    [SerializeField] private GameObject menuPanel;
+    [SerializeField] private GameObject gameOverPanel;
 
     // Players UI
     public GameObject[] PlayersUI;
@@ -41,7 +43,7 @@ public class GameManager : MonoBehaviourPunCallbacks
     void Start()
     {
         // Open start panel
-        StartPanel.SetActive(true);
+        startPanel.SetActive(true);
 
         // Setup
         PlayTimeLimit = 180f;
@@ -183,6 +185,24 @@ public class GameManager : MonoBehaviourPunCallbacks
         }
 
         // Open panel
+        menuPanel.SetActive(false);
+        gameOverPanel.SetActive(true);
+
+        // Set value
+        GameOverPanel panel = FindObjectOfType<GameOverPanel>();
+        for(int i = 0; i < panel.playerName.Length; i++)
+        {
+            if(i < playersOrder.Length)
+            {
+                panel.playerName[i].text = (i + 1).ToString() + ". " + playersOrder[i].photonView.Owner.NickName;
+                panel.playerKingTime[i].text = playersOrder[i].kingTime.ToString("F0");
+            }
+            else
+            {
+                panel.playerName[i].text = "";
+                panel.playerKingTime[i].text = "";
+            }
+        }
     }
 
     public bool AmIWin(string name)
