@@ -1,8 +1,10 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 using Photon.Pun;
+using Photon.Realtime;
 
 public class GameManager : MonoBehaviourPunCallbacks
 {
@@ -30,6 +32,8 @@ public class GameManager : MonoBehaviourPunCallbacks
     public float playTimeCooldown { get; private set; }
     [SerializeField] private Text timerText;
 
+    // After Match
+    public static AfterMatchData[] AfterMatchPlayerRank { get; private set; }
 
     void Start()
     {
@@ -59,7 +63,7 @@ public class GameManager : MonoBehaviourPunCallbacks
         else if(playTimeCooldown <= 0)
         {
             // Time out
-
+            GameOver();
         }
     }
 
@@ -125,5 +129,65 @@ public class GameManager : MonoBehaviourPunCallbacks
 
             theText.text = min + ":" + sec;
         }
+    }
+
+    // Game Over Method
+    public void GameOver()
+    {
+        // Stop Game
+        photonView.RPC("StopGame", RpcTarget.All);
+
+        // Find all player
+        PlayerManager[] players = FindObjectsOfType<PlayerManager>();
+        // Sort based on king time
+        for (int i = 0; i < players.Length; i++)
+        {
+            var m = i;
+
+            for(int j = i + 1; j < players.Length; j++)
+            {
+                if(players[i].kingTime < players[j].kingTime)
+                {
+                    m = j;
+                }
+            }
+
+            if (m != i)
+            {
+                var temp = players[m];
+                players[m] = players[i];
+                players[i] = temp;
+            }
+        }
+        // Safe it to static var
+        AfterMatchPlayerRank = new AfterMatchData[players.Length];
+        for(int i = 0; i < players.Length; i ++)
+        {
+            AfterMatchPlayerRank[i].playerName = players[i].GetName();
+            AfterMatchPlayerRank[i].kingTime = players[i].kingTime;
+            if(i == 0)
+            {
+                AfterMatchPlayerRank[i].win = 1;
+                AfterMatchPlayerRank[i].lose = 0;
+            }
+            else
+            {
+                AfterMatchPlayerRank[i].win = 0;
+                AfterMatchPlayerRank[i].lose = 1;
+            }
+            AfterMatchPlayerRank[i].match = 1;
+        }
+
+    }
+    [PunRPC]
+    public void StopGame()
+    {
+        GameIsRolling = false;
+    }
+
+    // Return to play menu
+    public void ReturnToPlayMenu()
+    {
+        SceneManager.LoadScene("Scene-0_PlayMenu");
     }
 }

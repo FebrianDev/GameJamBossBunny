@@ -11,16 +11,4 @@ public class PlayerUIGroub : MonoBehaviour
     public GameObject kingLogo;
     public Slider kingProgressSlider;
     public Text kingProgressText;
-
-    // Start is called before the first frame update
-    void Start()
-    {
-        
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-        
-    }
 }

@@ -164,7 +164,7 @@ public class PlayerManager : MonoBehaviourPunCallbacks
         if(kingTime >= MaxKingTime)
         {
             // End games
-
+            manager.GameOver();
         }
     }
 
@@ -268,5 +268,11 @@ public class PlayerManager : MonoBehaviourPunCallbacks
             isJump = false;
             onGround = true;
         }
+    }
+
+    // Get Player Name
+    public string GetName()
+    {
+        return photonView.Owner.NickName;
     }
 }
