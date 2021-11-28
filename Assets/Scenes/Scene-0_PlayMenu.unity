@@ -229,6 +229,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   connectingToServerPanel: {fileID: 832565775}
+  createRoomPanel: {fileID: 0}
+  joinRoomPanel: {fileID: 0}
   selectJoystickButton: {fileID: 889902261}
   selectButtonButton: {fileID: 1065527502}
   scrollBar: {fileID: 1394671670}
@@ -1001,8 +1003,8 @@ RectTransform:
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
-  - {fileID: 1123306091}
   - {fileID: 1954993189}
+  - {fileID: 1123306091}
   - {fileID: 1983089981}
   m_Father: {fileID: 298526661}
   m_RootOrder: 0
@@ -1025,8 +1027,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Padding:
-    m_Left: 150
-    m_Right: 150
+    m_Left: 500
+    m_Right: 500
     m_Top: 0
     m_Bottom: 0
   m_ChildAlignment: 3
@@ -1305,7 +1307,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -560, y: 16}
+  m_AnchoredPosition: {x: -900, y: 16}
   m_SizeDelta: {x: 239.75073, y: 224.78326}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &505377599
@@ -3280,7 +3282,7 @@ RectTransform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 380175274}
-  m_RootOrder: 0
+  m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
@@ -3331,7 +3333,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 145759324}
-        m_MethodName: PlayButton
+        m_MethodName: QuickMatchButton
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -3909,8 +3911,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0, y: 16}
-  m_SizeDelta: {x: 800, y: 600}
+  m_AnchoredPosition: {x: 0.20781, y: 16}
+  m_SizeDelta: {x: 1522.4651, y: 600}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1298984697
 MonoBehaviour:
@@ -4217,7 +4219,7 @@ MonoBehaviour:
   m_HandleRect: {fileID: 1432564399}
   m_Direction: 0
   m_Value: 0
-  m_Size: 0.36363637
+  m_Size: 0.52498794
   m_NumberOfSteps: 0
   m_OnValueChanged:
     m_PersistentCalls:
@@ -4867,7 +4869,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 560, y: 16}
+  m_AnchoredPosition: {x: 900, y: 16}
   m_SizeDelta: {x: 239.75073, y: 224.78326}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1655011551
@@ -5265,7 +5267,7 @@ RectTransform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 380175274}
-  m_RootOrder: 1
+  m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
@@ -5315,16 +5317,16 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 2135225555}
-        m_MethodName: SetActive
-        m_Mode: 6
+      - m_Target: {fileID: 145759324}
+        m_MethodName: CreateButton
+        m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
           m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
           m_IntArgument: 0
           m_FloatArgument: 0
           m_StringArgument: 
-          m_BoolArgument: 1
+          m_BoolArgument: 0
         m_CallState: 2
 --- !u!114 &1954993191
 MonoBehaviour:
@@ -5444,16 +5446,16 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 775681627}
-        m_MethodName: SetActive
-        m_Mode: 6
+      - m_Target: {fileID: 145759324}
+        m_MethodName: JoinButton
+        m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
           m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
           m_IntArgument: 0
           m_FloatArgument: 0
           m_StringArgument: 
-          m_BoolArgument: 1
+          m_BoolArgument: 0
         m_CallState: 2
 --- !u!114 &1983089983
 MonoBehaviour:

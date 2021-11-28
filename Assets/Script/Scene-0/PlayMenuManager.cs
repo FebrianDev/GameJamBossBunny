@@ -10,6 +10,8 @@ public class PlayMenuManager : MonoBehaviourPunCallbacks
 {
     // Panels
     [SerializeField] private GameObject connectingToServerPanel;
+    [SerializeField] private GameObject createRoomPanel;
+    [SerializeField] private GameObject joinRoomPanel;
 
     // Buttons
     [SerializeField] private GameObject selectJoystickButton;
@@ -26,6 +28,8 @@ public class PlayMenuManager : MonoBehaviourPunCallbacks
     float scrollPos = 0;
     float[] allScrollPos;
     int SelectedPos;
+    private Color selectedColor;
+    private Color deselectedColor;
 
     void Start()
     {
@@ -52,9 +56,11 @@ public class PlayMenuManager : MonoBehaviourPunCallbacks
         {
             allScrollPos[i] = dist * i;
         }
-        SelectedPos = 0;
-        scrollBar.GetComponent<Scrollbar>().value = allScrollPos[0];
-        scrollPos = allScrollPos[0];
+        SelectedPos = 1;
+        scrollBar.GetComponent<Scrollbar>().value = allScrollPos[SelectedPos];
+        scrollPos = allScrollPos[SelectedPos];
+        selectedColor = new Color(1, 1, 1, 1);
+        deselectedColor = new Color(1, 1, 1, 130 / 255f);
     }
 
     
@@ -88,10 +94,12 @@ public class PlayMenuManager : MonoBehaviourPunCallbacks
             if (scrollPos < allScrollPos[i] + (dist / 2) && scrollPos > allScrollPos[i] - (dist / 2))
             {
                 content.transform.GetChild(i).localScale = Vector2.Lerp(content.transform.GetChild(i).localScale, new Vector2(1, 1), .05f);
+                content.transform.GetChild(i).GetComponent<Image>().color = selectedColor;
             }
             else
             {
                 content.transform.GetChild(i).localScale = Vector2.Lerp(content.transform.GetChild(i).localScale, new Vector2(.65f, .65f), .05f);
+                content.transform.GetChild(i).GetComponent<Image>().color = deselectedColor;
             }
         }
     }
@@ -114,11 +122,11 @@ public class PlayMenuManager : MonoBehaviourPunCallbacks
     {
         if(value == 0)
         {
-            selectedText.text = "Quick Match";
+            selectedText.text = "Create Room";
         }
         else if(value == 1)
         {
-            selectedText.text = "Create Room";
+            selectedText.text = "Quick Match";
         }
         else if (value == 2)
         {
@@ -151,16 +159,54 @@ public class PlayMenuManager : MonoBehaviourPunCallbacks
     }
 
     // Method for play button (Join Room) --------------------------------------------------------------------------
-    public void PlayButton()
+    public void QuickMatchButton()
     {
-        // Some UI
-        //matchmakingPanel.SetActive(true);
+        if (SelectedPos == 1)
+        {
+            // Some UI
+            //matchmakingPanel.SetActive(true);
 
-        // Setting Player Name (Temporary random)
-        PhotonNetwork.NickName = PlayerPrefs.GetString(Constant.KEY_NAME);
+            // Setting Player Name (Temporary random)
+            PhotonNetwork.NickName = PlayerPrefs.GetString(Constant.KEY_NAME);
 
-        // Join some Random Room
-        PhotonNetwork.JoinRandomRoom();
+            // Join some Random Room
+            PhotonNetwork.JoinRandomRoom();
+        }
+        else
+        {
+            SelectedPos = 1;
+            scrollBar.GetComponent<Scrollbar>().value = allScrollPos[SelectedPos];
+            scrollPos = allScrollPos[SelectedPos];
+            ChangeButtonText(SelectedPos);
+        }
+    }
+    public void CreateButton()
+    {
+        if (SelectedPos == 0)
+        {
+            createRoomPanel.SetActive(true);
+        }
+        else
+        {
+            SelectedPos = 0;
+            scrollBar.GetComponent<Scrollbar>().value = allScrollPos[SelectedPos];
+            scrollPos = allScrollPos[SelectedPos];
+            ChangeButtonText(SelectedPos);
+        }
+    }
+    public void JoinButton()
+    {
+        if (SelectedPos == 2)
+        {
+            createRoomPanel.SetActive(true);
+        }
+        else
+        {
+            SelectedPos = 2;
+            scrollBar.GetComponent<Scrollbar>().value = allScrollPos[SelectedPos];
+            scrollPos = allScrollPos[SelectedPos];
+            ChangeButtonText(SelectedPos);
+        }
     }
     // If Join Room Failed (there is no room avaliable)
     public override void OnJoinRandomFailed(short returnCode, string message)

@@ -39,7 +39,7 @@ public class PlayerManager : MonoBehaviourPunCallbacks
     private bool hitIsCooldown;
 
     // King Mechanic
-    private float MaxKingTime = 3f;
+    private float MaxKingTime = 60f;
     public bool IsKing { get; private set; }
     public float kingTime { get; private set; }
 
