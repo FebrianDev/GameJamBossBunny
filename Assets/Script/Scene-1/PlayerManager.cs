@@ -275,27 +275,22 @@ public class PlayerManager : MonoBehaviourPunCallbacks
         if (photonEvent.Code == GameManager.SEND_DATA_EVENT && photonView.Owner.IsLocal)
         {
             // Build the data
-            AfterMatchData afterMatch = new AfterMatchData();
             AfterMatchData.playerName = photonView.Owner.NickName;
-            AfterMatchData .kingTime = kingTime;
+            AfterMatchData.kingTime = kingTime;
             if (manager.AmIWin(photonView.Owner.NickName))
             {
-                AfterMatchData .win = 1;
-                AfterMatchData .lose = 0;
+                AfterMatchData.win = 1; Debug.Log("Win");
+                AfterMatchData.lose = 0;
             }
             else
             {
-                AfterMatchData .win = 0;
-                AfterMatchData .lose = 1;
+                AfterMatchData.win = 0; Debug.Log("Lose");
+                AfterMatchData.lose = 1;
             }
-            AfterMatchData .match = 1;
+            AfterMatchData.match = 1;
 
             // Send the data
-            GameManager.afMData = afterMatch;
             manager.SendDatabase();
-
-            // Debug
-            Debug.Log("Data Sended");
         }
     }
     private void OnEnable()

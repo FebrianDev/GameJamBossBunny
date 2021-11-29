@@ -24,8 +24,6 @@ public class AfterMatch : MonoBehaviour
 
     #endregion
 
-    public static AfterMatchData data;
-
     void Start()
     {
         //dummyName
@@ -67,7 +65,7 @@ public class AfterMatch : MonoBehaviour
         }
     }
 
-    public void UploadDataPlayerToFirebase(AfterMatchData data)
+    public void UploadDataPlayerToFirebase()
     {
         var reference = FirebaseDatabase.DefaultInstance.GetReference("Users").Child(id);
         reference.Child("score").SetValueAsync(score + AfterMatchData.kingTime);
@@ -75,14 +73,16 @@ public class AfterMatch : MonoBehaviour
         reference.Child("lose").SetValueAsync(lose + AfterMatchData.lose);
         reference.Child("match").SetValueAsync(match + AfterMatchData.match);
         reference.Child("winRate").SetValueAsync(((win + AfterMatchData.win) / (match + AfterMatchData.lose)) * 100);
+        Debug.Log("UploadDataPlayerToFirebase");
     }
 
-    public void UploadHistoryPlayer(AfterMatchData data)
+    public void UploadHistoryPlayer()
     {
         var reference = FirebaseDatabase.DefaultInstance.GetReference("Histories").Child(id).Child("his"+Random.Range(0,1000)+"tory" + Random.Range(0,1000000));
         reference.Child("name").SetValueAsync(AfterMatchData.playerName);
         reference.Child("score").SetValueAsync(AfterMatchData.kingTime);
         reference.Child("win").SetValueAsync(AfterMatchData.win);
+        Debug.Log("UploadHistoryPlayer");
     }
 
     
@@ -92,7 +92,7 @@ public class AfterMatch : MonoBehaviour
      {
          yield return new WaitForSeconds(3);
          
-         UploadDataPlayerToFirebase(data);
-         UploadHistoryPlayer(data);
+         UploadDataPlayerToFirebase();
+         UploadHistoryPlayer();
      }
 }

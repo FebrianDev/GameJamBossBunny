@@ -198,7 +198,7 @@ public class PlayMenuManager : MonoBehaviourPunCallbacks
     {
         if (SelectedPos == 2)
         {
-            createRoomPanel.SetActive(true);
+            joinRoomPanel.SetActive(true);
         }
         else
         {

@@ -37,7 +37,6 @@ public class GameManager : MonoBehaviourPunCallbacks
 
     // Database
     public const byte SEND_DATA_EVENT = 77;
-    public static AfterMatchData afMData;
     [SerializeField] private GameObject dataBaseObject;
 
     void Start()
@@ -57,7 +56,6 @@ public class GameManager : MonoBehaviourPunCallbacks
         }
     }
 
-    
     void Update()
     {
         if (GameIsRolling && playTimeCooldown > 0)
@@ -230,8 +228,9 @@ public class GameManager : MonoBehaviourPunCallbacks
             }
         }
 
-        if(playersOrder[0].name == name)
+        if (playersOrder[0].photonView.Owner.NickName == name)
         {
+            
             return true;
         }
         else

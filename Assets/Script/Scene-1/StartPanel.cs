@@ -88,6 +88,7 @@ public class StartPanel : MonoBehaviourPunCallbacks
             if (!isSelected[i])
             {
                 photonView.RPC("SelectedSkinOnline", RpcTarget.All, i, i);
+                selectedSkin = i;
                 return;
             }
         }
@@ -99,7 +100,6 @@ public class StartPanel : MonoBehaviourPunCallbacks
         {
             isSelected[oldButton] = false;
             isSelected[newButton] = true;
-            selectedSkin = newButton;
 
             for (int i = 0; i < buttonGroups.Length; i++)
             {
@@ -117,5 +117,6 @@ public class StartPanel : MonoBehaviourPunCallbacks
     public void SelectedSkin(int newButton)
     {
         photonView.RPC("SelectedSkinOnline", RpcTarget.All, selectedSkin, newButton);
+        selectedSkin = newButton;
     }
 }
