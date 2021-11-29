@@ -39,19 +39,22 @@ public class Leaderboard : MonoBehaviour
                 print(list.name);
                 print(list.score);
 
-                var go = Instantiate(item, new Vector3(0, 0, 0), Quaternion.identity);
-                go.transform.parent = GameObject.Find("Panel").transform;
-                go.transform.localPosition = new Vector2(-180, posNow.transform.localPosition.y - (40 * i));
-                go.transform.localScale = new Vector3(1, 1, 1);
+                if (i <= 7)
+                {
+                    var go = Instantiate(item, new Vector3(0, 0, 0), Quaternion.identity);
+                    go.transform.parent = GameObject.Find("Leaderboard").transform;
+                    go.transform.localPosition = new Vector2(-80, posNow.transform.localPosition.y - (25 * i));
+                    go.transform.localScale = new Vector3(1, 1, 1);
 
-                var no = go.transform.GetChild(0).gameObject;
-                no.GetComponent<Text>().text = i.ToString();
-                var name = go.transform.GetChild(1).gameObject;
-                name.GetComponent<Text>().text = list.name.ToString();
-                var score = go.transform.GetChild(2).gameObject;
-                score.GetComponent<Text>().text = list.score.ToString();
+                    var no = go.transform.GetChild(0).gameObject;
+                    no.GetComponent<Text>().text = list.name.ToString();
+                    var name = go.transform.GetChild(1).gameObject;
+                    name.GetComponent<Text>().text = i.ToString();
+                    var score = go.transform.GetChild(2).gameObject;
+                    score.GetComponent<Text>().text = list.score.ToString();
 
-                i++;
+                    i++;
+                }
             }
         }
     }
