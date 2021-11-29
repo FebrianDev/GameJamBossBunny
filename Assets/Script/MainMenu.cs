@@ -44,7 +44,7 @@ public class MainMenu : MonoBehaviour
 
     public void Play()
     {
-        SceneManager.LoadScene("Scene-0_MainMenu");
+        SceneManager.LoadScene("Scene-0_PlayMenu");
     }
 
     public void EditProfile()

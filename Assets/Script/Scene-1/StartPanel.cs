@@ -59,11 +59,8 @@ public class StartPanel : MonoBehaviourPunCallbacks
         // Start The Games
         photonView.RPC("StartGames", RpcTarget.All);
         // Close the room
-        if (PhotonNetwork.IsMasterClient)
-        {
-            PhotonNetwork.CurrentRoom.IsVisible = false;
-            PhotonNetwork.CurrentRoom.IsOpen = false;
-        }
+        PhotonNetwork.CurrentRoom.IsVisible = false;
+        PhotonNetwork.CurrentRoom.IsOpen = false;
     }
     [PunRPC]
     public void StartGames()

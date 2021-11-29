@@ -232,8 +232,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   connectingToServerPanel: {fileID: 832565775}
-  createRoomPanel: {fileID: 0}
-  joinRoomPanel: {fileID: 0}
+  createRoomPanel: {fileID: 2135225555}
+  joinRoomPanel: {fileID: 775681627}
   selectJoystickButton: {fileID: 889902261}
   selectButtonButton: {fileID: 1065527502}
   scrollBar: {fileID: 1394671670}
