@@ -25,16 +25,17 @@ public class Login : MonoBehaviour
 
         if (e2.Snapshot != null && e2.Snapshot.ChildrenCount > 0)
         {
+            var check = false;
+            int i = 0;
             foreach (var childSnapshot in e2.Snapshot.Children)
             {
                 var id = childSnapshot.Child("id").Value.ToString();
                 nameExist = childSnapshot.Child("name").Value.ToString();
                 pwdExist = childSnapshot.Child("password").Value.ToString();
 
-                Debug.Log(nameExist);
-                Debug.Log(name.text);
                 if (name.text == nameExist)
                 {
+                    check = true;
                     if (pwd.text == pwdExist)
                     {
                         err.text = "";
@@ -49,15 +50,22 @@ public class Login : MonoBehaviour
                         print(message);
                     }
                 }
-                else
-                {
-                    var message = "Username not exist!";
-                    err.text = message;
-                    print(message);
-                }
+
+                if (e2.Snapshot.ChildrenCount == i)
+                    check = false;
+
+                i++;
+            }
+
+            if (!check)
+            {
+                var message2 = "Username is not Exist!";
+                err.text = message2;
+                print(message2);
             }
         }
     }
+
 
     public void GotoRegister()
     {
