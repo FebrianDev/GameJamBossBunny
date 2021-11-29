@@ -11,10 +11,18 @@ public class StartPanel : MonoBehaviourPunCallbacks
     [SerializeField] private Text roomName;
     [SerializeField] private Text playerInRoom;
 
+    [SerializeField] private GameObject[] buttonGroups;
+    [SerializeField] private bool[] isSelected;
+    private int selectedSkin;
+
     // Game Manager
     private GameManager manager;
 
-   
+    // Color button
+    private Color selectedColor = new Color(1, 1, 1, 130 / 225f);
+    private Color unSelectedColor = new Color(1, 1, 1, 1);
+
+
     void Start()
     {
         manager = FindObjectOfType<GameManager>();
@@ -28,6 +36,14 @@ public class StartPanel : MonoBehaviourPunCallbacks
         {
             startButton.SetActive(false);
         }
+
+        isSelected = new bool[buttonGroups.Length];
+        for(int i = 0; i < isSelected.Length; i++)
+        {
+            isSelected[i] = new bool();
+        }
+
+        PickSkin();
     }
 
     
@@ -63,5 +79,43 @@ public class StartPanel : MonoBehaviourPunCallbacks
 
         // Close panel
         gameObject.SetActive(false);
+    }
+
+    private void PickSkin()
+    {
+        for (int i = 0; i < buttonGroups.Length; i++)
+        {
+            if (!isSelected[i])
+            {
+                photonView.RPC("SelectedSkinOnline", RpcTarget.All, i, i);
+                return;
+            }
+        }
+    }
+    [PunRPC]
+    public void SelectedSkinOnline(int oldButton, int newButton)
+    {
+        if (!isSelected[newButton])
+        {
+            isSelected[oldButton] = false;
+            isSelected[newButton] = true;
+            selectedSkin = newButton;
+
+            for (int i = 0; i < buttonGroups.Length; i++)
+            {
+                if (isSelected[i])
+                {
+                    buttonGroups[i].GetComponent<Image>().color = selectedColor;
+                }
+                else
+                {
+                    buttonGroups[i].GetComponent<Image>().color = unSelectedColor;
+                }
+            }
+        }
+    }
+    public void SelectedSkin(int newButton)
+    {
+        photonView.RPC("SelectedSkinOnline", RpcTarget.All, selectedSkin, newButton);
     }
 }
