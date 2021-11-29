@@ -135,11 +135,6 @@ public class Profile : MonoBehaviour
         }
     }
 
-    public void Back()
-    {
-        SceneManager.LoadScene("MainMenu");
-    }
-
     public void Logout()
     {
         PlayerPrefs.DeleteAll();
