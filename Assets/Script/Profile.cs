@@ -16,7 +16,6 @@ public class Profile : MonoBehaviour
 
     [SerializeField] private InputField inputPassword;
     [SerializeField] private InputField inputScore;
-    [SerializeField] private InputField inputCoin;
     [SerializeField] private InputField inputWin;
     [SerializeField] private InputField inputLose;
     [SerializeField] private InputField inputMatch;
@@ -56,7 +55,6 @@ public class Profile : MonoBehaviour
                     inputName.text = name;
                     inputPassword.text = password;
                     inputScore.text = childSnapshot.Child("score").Value.ToString();
-                    inputCoin.text = childSnapshot.Child("coin").Value.ToString();
                     inputWin.text = childSnapshot.Child("win").Value.ToString();
                     inputLose.text = childSnapshot.Child("lose").Value.ToString();
                     inputMatch.text = childSnapshot.Child("match").Value.ToString();
@@ -81,12 +79,14 @@ public class Profile : MonoBehaviour
             tempName = inputName.text;
             
             var myMessage = "Success";
+            message.color = new Color32(30,145,50,255);
             message.text = myMessage;
             print(myMessage);
         }
         else
         {
-            var myMessage = "Gagal!";
+            var myMessage = "Failed!";
+            message.color = Color.red;
             message.text = myMessage;
         }
     }
@@ -99,7 +99,7 @@ public class Profile : MonoBehaviour
             return true;
         }
 
-        var message = "Password Harus Diisi";
+        var message = "Password must be filled!";
         errPwd.text = message;
         print(message);
 
@@ -116,21 +116,20 @@ public class Profile : MonoBehaviour
 
         else if (name == inputName.text && tempName != inputName.text)
         {
-            var message = "Username Sudah Ada!";
+            var message = "Username has been used!";
             print(message);
             errName.text = message;
             return false;
         }
         else if(inputName.text == "")
         {
-            var message = "Username Harus Diisi!";
+            var message = "Username must be filled!";
             print(message);
             errName.text = message;
             return false;
         }
         else
         {
-            print("OKEKEK");
             return true;
         }
     }

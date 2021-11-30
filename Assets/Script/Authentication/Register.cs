@@ -69,7 +69,7 @@ public class Register : MonoBehaviour
             print("Success");
             PlayerPrefs.SetString(Constant.KEY_NAME, name.text);
             PlayerPrefs.SetString(Constant.KEY_ID, id);
-            SceneManager.LoadScene("MainMenu");
+            SceneManager.LoadScene("Story");
         }
         else
         {

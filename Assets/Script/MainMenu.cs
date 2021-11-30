@@ -1,11 +1,12 @@
 ﻿using Firebase.Database;
+using TMPro;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
 public class MainMenu : MonoBehaviour
 {
-    [SerializeField] private Text nameText;
+    [SerializeField] private TMP_Text nameText;
     private string name;
     private DataUser user;
 
@@ -28,10 +29,11 @@ public class MainMenu : MonoBehaviour
         {
             foreach (var childSnapshot in e2.Snapshot.Children)
             {
+                var id = childSnapshot.Child("id").Value.ToString();
                 var n = childSnapshot.Child("name").Value.ToString();
                 if (n == name)
                 {
-                    SetName(name);
+                    SetName(id);
                 }
             }
         }
@@ -39,7 +41,7 @@ public class MainMenu : MonoBehaviour
 
     private void SetName(string name)
     {
-        nameText.text = "Welcome " + name;
+        nameText.text = "ID : "+name;
     }
 
     public void Play()
@@ -49,7 +51,7 @@ public class MainMenu : MonoBehaviour
 
     public void EditProfile()
     {
-        SceneManager.LoadScene("EditProfile");
+        SceneManager.LoadScene("Settings");
     }
 
     public void Leaderboard()

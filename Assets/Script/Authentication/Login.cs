@@ -41,7 +41,7 @@ public class Login : MonoBehaviour
                         err.text = "";
                         PlayerPrefs.SetString(Constant.KEY_NAME, name.text);
                         PlayerPrefs.SetString(Constant.KEY_ID, id);
-                        SceneManager.LoadScene("MainMenu");
+                        SceneManager.LoadScene("Story");
                     }
                     else
                     {
