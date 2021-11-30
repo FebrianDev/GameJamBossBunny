@@ -26,7 +26,7 @@ public class PlayerManager : MonoBehaviourPunCallbacks
     GameManager manager;
 
     // ID
-    public int ID { get; set; }
+    public int PlayerUID { get; set; }
 
     // Hit Method
     [SerializeField] private Transform hitPos;
@@ -39,12 +39,16 @@ public class PlayerManager : MonoBehaviourPunCallbacks
     private bool hitIsCooldown;
 
     // King Mechanic
-    private float MaxKingTime = 15f;
+    private float MaxKingTime = 60f;
     public bool IsKing { get; private set; }
     public float kingTime { get; private set; }
 
     // Player UI
     PlayerUIGroub uIGroub;
+    [SerializeField] private Text nameText;
+
+    // Just in case leave room
+    private bool isDestroy;
 
     void Start()
     {
@@ -54,14 +58,35 @@ public class PlayerManager : MonoBehaviourPunCallbacks
         // Set data
         kingTime = 0;
 
+        if (photonView.IsMine)
+        {
+            PlayerUID = 0;
+            GameManager.PlayerUIisSelected[0] = true;
+        }
+        else
+        {
+            for(int i = 0; i < 3; i++)
+            {
+                if(!GameManager.PlayerUIisSelected[i + 1])
+                {
+                    PlayerUID = i + 1;
+                    GameManager.PlayerUIisSelected[i + 1] = true;
+                }
+            }
+        }
+
         // Set UI
-        GameObject uiTemp = manager.PlayersUI[ID - 1];
+        Debug.Log(photonView.Owner.NickName + " " + (PlayerUID).ToString());
+        GameObject uiTemp = manager.PlayersUI[PlayerUID];
         uiTemp.SetActive(true);
         uIGroub = uiTemp.GetComponent<PlayerUIGroub>();
         uIGroub.playerNameText.text = photonView.Owner.NickName;
         uIGroub.kingLogo.SetActive(false);
         uIGroub.kingProgressText.text = "0 %";
         uIGroub.kingProgressSlider.value = 0;
+
+        gameObject.GetComponentInChildren<Canvas>().worldCamera = FindObjectOfType<Camera>();
+        nameText.text = photonView.Owner.NickName;
 
         if (photonView.IsMine)
         {
@@ -86,6 +111,9 @@ public class PlayerManager : MonoBehaviourPunCallbacks
             {
                 joystick.gameObject.SetActive(false);
             }
+
+            // Sync data
+            StartCoroutine(SyncUI());
         }       
     }
     
@@ -142,15 +170,33 @@ public class PlayerManager : MonoBehaviourPunCallbacks
             // Player Hit
             if (hitButton.isPressed)
             {
-                HitPlayerOnline();
+                HitPlayer();
+            }
+
+            // King time
+            if (IsKing)
+            {
+                kingTime += Time.deltaTime;
             }
         }
 
+        photonView.RPC("SetUI", RpcTarget.All);
+        
+        // Check king value
+        if(kingTime >= MaxKingTime && GameManager.GameIsRolling && !isDestroy)
+        {
+            // End games
+            manager.GameOverOnline();
+        }
+    }
+
+    [PunRPC]
+    public void SetUI()
+    {
         // Set UI
         if (IsKing && GameManager.GameIsRolling)
         {
             uIGroub.kingLogo.SetActive(true);
-            kingTime += Time.deltaTime;
         }
         else if (!IsKing)
         {
@@ -158,21 +204,26 @@ public class PlayerManager : MonoBehaviourPunCallbacks
         }
         uIGroub.kingProgressSlider.value = kingTime / MaxKingTime;
         uIGroub.kingProgressText.text = (kingTime / MaxKingTime * 100).ToString("F0") + " %";
-        
-        // Check king value
-        if(kingTime >= MaxKingTime && GameManager.GameIsRolling)
+    }
+    public IEnumerator SyncUI()
+    {
+        while (true)
         {
-            // End games
-            manager.GameOverOnline();
+            if (GameManager.GameIsRolling)
+            {
+                photonView.RPC("SyncUIOnline", RpcTarget.All, kingTime);
+            }
+
+            yield return new WaitForSeconds(.5f);
         }
+    }
+    [PunRPC]
+    public void SyncUIOnline(float value)
+    {
+        kingTime = value;
     }
 
     // Hit Player
-    public void HitPlayerOnline()
-    {
-        photonView.RPC("HitPlayer", RpcTarget.All);
-    }
-    [PunRPC]
     public void HitPlayer()
     {
         if (!hitIsCooldown)
@@ -182,26 +233,30 @@ public class PlayerManager : MonoBehaviourPunCallbacks
 
             // Hit player here
             Collider2D[] targetHit = Physics2D.OverlapCircleAll(hitPos.position, hitRange, playerLayerMask);
-            foreach(Collider2D target in targetHit)
+            for (int i = 0; i < targetHit.Length; i++)
             {
-                if(target.attachedRigidbody != rigidbody)
+                Debug.Log("Hit Target : " + targetHit[i].name);
+                if (targetHit[i].attachedRigidbody != rigidbody)
                 {
                     // Push them
-                    target.GetComponent<Rigidbody2D>().AddForce(new Vector2(hitForce, 0));
-                    target.GetComponent<PlayerManager>().GetHit();
+                    targetHit[i].gameObject.GetComponent<PlayerManager>().photonView.RPC("PushPlayer", RpcTarget.All, isFacingRight);
+                    targetHit[i].gameObject.GetComponent<PlayerManager>().photonView.RPC("GetHit", RpcTarget.All);
 
                     // Take the King
-                    target.GetComponent<PlayerManager>().ResetFromKing();
-                    SetToKing();
+                    if (targetHit[i].GetComponent<PlayerManager>().IsKing)
+                    {
+                        targetHit[i].gameObject.GetComponent<PlayerManager>().photonView.RPC("ResetFromKing", RpcTarget.All);
+                        photonView.RPC("SetToKing", RpcTarget.All);
+                    }
                 }
             }
-
             // Start cooldown
             StartCoroutine(HitPlayerCooldown());
         }
     }
     private IEnumerator HitPlayerCooldown()
     {
+        Debug.Log("Hit cooldown");
         while(hitCountdown > 0)
         {
             yield return new WaitForFixedUpdate();
@@ -216,6 +271,20 @@ public class PlayerManager : MonoBehaviourPunCallbacks
             }
         }   
     }
+
+    [PunRPC]
+    public void PushPlayer(bool isRight)
+    {
+        if (isRight)
+        {
+            rigidbody.AddForce(new Vector2(hitForce, 0));
+        }
+        else
+        {
+            rigidbody.AddForce(new Vector2(-hitForce, 0));
+        }
+    }
+    [PunRPC]
     public void GetHit()
     {
         getHit = true;
@@ -226,20 +295,12 @@ public class PlayerManager : MonoBehaviourPunCallbacks
         yield return new WaitForSeconds(.5f);
         getHit = false;
     }
-    
+
     // King method
-    public void SetToKingOnline()
-    {
-        photonView.RPC("SetToKing", RpcTarget.All);
-    }
     [PunRPC]
     public void SetToKing()
     {
         IsKing = true;
-    }
-    public void ResetFromKingOnline()
-    {
-        photonView.RPC("ResetFromKing", RpcTarget.All);
     }
     [PunRPC]
     public void ResetFromKing()
@@ -250,17 +311,21 @@ public class PlayerManager : MonoBehaviourPunCallbacks
     // Detect Collision -------------------------------------------------------------------------------------------
     private void OnTriggerEnter2D(Collider2D collision)
     {
-        
+        if(collision.tag == "Crown")
+        {
+            collision.GetComponent<CrownManager>().photonView.RPC("DiactivateObject", RpcTarget.All);
+            photonView.RPC("SetToKing", RpcTarget.All);
+        }
     }
 
     private void OnCollisionEnter2D(Collision2D collision)
     {
         // Only call this if this player is local
-        if (collision.collider.tag == "PlayerHead")
+        if (collision.collider.tag == "PlayerHead" && collision.gameObject.GetComponentInParent<PlayerManager>().IsKing)
         {
             // Take the King
-            collision.collider.GetComponent<PlayerManager>().ResetFromKingOnline();
-            SetToKingOnline();
+            collision.gameObject.GetComponentInParent<PlayerManager>().photonView.RPC("ResetFromKing", RpcTarget.All);
+            photonView.RPC("SetToKing", RpcTarget.All);
         }
         else if (collision.collider.tag == "Platform")
         {

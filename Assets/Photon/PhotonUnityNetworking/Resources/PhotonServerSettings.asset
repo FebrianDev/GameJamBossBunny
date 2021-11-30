@@ -36,16 +36,21 @@ MonoBehaviour:
   RpcList:
   - ClickRpc
   - DestroyRpc
-  - StartGames
+  - GetHit
   - HitPlayer
-  - ResetFromKing
-  - SetToKing
-  - StopGame
-  - GameOverOnline
-  - A
   - OpenGameOverPanel
-  - PickSkin
+  - PushPlayer
+  - ResetFromKing
   - SelectedSkinOnline
+  - SetToKing
+  - SetUI
+  - StartGamesOnline
+  - StopGame
+  - SyncSelectedSkin
+  - SyncUIOnline
+  - SyncSkin
+  - SyncID
+  - DiactivateObject
   DisableAutoOpenWizard: 1
   ShowSettings: 0
   DevRegionSetOnce: 1

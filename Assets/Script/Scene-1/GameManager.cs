@@ -16,6 +16,7 @@ public class GameManager : MonoBehaviourPunCallbacks
 
     // Players UI
     public GameObject[] PlayersUI;
+    public static bool[] PlayerUIisSelected;
 
     // Buttons
     public GameObject JumpButton;
@@ -39,6 +40,10 @@ public class GameManager : MonoBehaviourPunCallbacks
     public const byte SEND_DATA_EVENT = 77;
     [SerializeField] private GameObject dataBaseObject;
 
+    // Crown
+    [SerializeField] private GameObject movingPlatform;
+    [SerializeField] private Transform movingPlatformSpawnPoint;
+
     void Start()
     {
         // Open start panel
@@ -53,6 +58,17 @@ public class GameManager : MonoBehaviourPunCallbacks
         foreach(GameObject a in PlayersUI)
         {
             a.SetActive(false);
+        }
+        PlayerUIisSelected = new bool[PlayersUI.Length];
+        for(int i = 0; i < PlayerUIisSelected.Length; i++)
+        {
+            PlayerUIisSelected[i] = false;
+        }
+
+        // Spawn moving platform
+        if (PhotonNetwork.IsMasterClient)
+        {
+            PhotonNetwork.Instantiate(movingPlatform.name, movingPlatformSpawnPoint.position, Quaternion.identity);
         }
     }
 
@@ -77,22 +93,7 @@ public class GameManager : MonoBehaviourPunCallbacks
     }
     public void SpawnPlayer(Vector3 position)
     {
-        GameObject temp = PhotonNetwork.Instantiate(playerPrefab.name, position, Quaternion.identity, 0);
-        temp.GetComponent<PlayerManager>().ID = PhotonNetwork.CurrentRoom.PlayerCount;
-    }
-
-    // Set the first King
-    public void SetFirstKing()
-    {
-        if (PhotonNetwork.IsMasterClient)
-        {
-            // Find all players
-            PlayerManager[] players = FindObjectsOfType<PlayerManager>();
-            // Randomize
-            int randKing = Random.Range(0, players.Length);
-            // Set to king
-            players[randKing].SetToKingOnline(); Debug.Log("King set to : " + randKing);
-        }
+        PhotonNetwork.Instantiate(playerPrefab.name, position, Quaternion.identity, 0);
     }
 
     // Staring Games
@@ -249,5 +250,15 @@ public class GameManager : MonoBehaviourPunCallbacks
     public void SendDatabase()
     {
         dataBaseObject.SetActive(true);
+    }
+
+    public void LeaveRoom()
+    {
+        PhotonNetwork.LeaveRoom();
+    }
+
+    public override void OnLeftRoom()
+    {
+        SceneManager.LoadScene("Scene-0_PlayMenu");
     }
 }
