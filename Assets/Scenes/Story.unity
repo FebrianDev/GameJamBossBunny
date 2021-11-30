@@ -455,6 +455,7 @@ MonoBehaviour:
   - {fileID: 863993964}
   - {fileID: 461033691}
   bg: {fileID: 2017296930}
+  speed: 320
 --- !u!1 &403625644
 GameObject:
   m_ObjectHideFlags: 0

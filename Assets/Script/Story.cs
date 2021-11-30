@@ -9,6 +9,8 @@ public class Story : MonoBehaviour
     [SerializeField]private GameObject [] go;
 
     [SerializeField] private Transform bg;
+
+    [SerializeField] private float speed;
     void Start()
     {
         StartCoroutine("StartAnimation");
@@ -17,7 +19,7 @@ public class Story : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        bg.position += Vector3.left * (Time.deltaTime * 30f);
+        bg.position += Vector3.left * (Time.deltaTime * speed);
     }
 
     IEnumerator StartAnimation()
