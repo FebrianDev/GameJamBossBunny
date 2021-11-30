@@ -9,6 +9,7 @@ TagManager:
   - BoingBoingJump
   - GameManager
   - ArenaWall
+  - Crown
   layers:
   - Default
   - TransparentFX

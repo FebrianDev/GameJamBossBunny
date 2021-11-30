@@ -39,7 +39,7 @@ public class PlayerManager : MonoBehaviourPunCallbacks
     private bool hitIsCooldown;
 
     // King Mechanic
-    private float MaxKingTime = 2f;
+    private float MaxKingTime = 60f;
     public bool IsKing { get; private set; }
     public float kingTime { get; private set; }
     [SerializeField] private GameObject myCrown;
@@ -388,7 +388,7 @@ public class PlayerManager : MonoBehaviourPunCallbacks
             // Build the data
             AfterMatchData.playerName = PlayerPrefs.GetString(Constant.KEY_NAME);
             AfterMatchData.kingTime = kingTime;
-            if (manager.AmIWin(photonView.Owner.NickName))
+            if (manager.AmIWin(PlayerPrefs.GetString(Constant.KEY_NAME)))
             {
                 AfterMatchData.win = 1; Debug.Log("Win");
                 AfterMatchData.lose = 0;
@@ -399,6 +399,8 @@ public class PlayerManager : MonoBehaviourPunCallbacks
                 AfterMatchData.lose = 1;
             }
             AfterMatchData.match = 1;
+
+            Debug.Log(AfterMatchData.playerName);
 
             // Send the data
             manager.SendDatabase();

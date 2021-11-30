@@ -90,7 +90,7 @@ public class AfterMatch : MonoBehaviour
    // Test Demo
      IEnumerator Upload()
      {
-         yield return new WaitForSeconds(3);
+         yield return new WaitForSeconds(5);
          
          UploadDataPlayerToFirebase();
          UploadHistoryPlayer();
