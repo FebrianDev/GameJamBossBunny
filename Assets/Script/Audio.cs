@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class Audio : MonoBehaviour
 {
@@ -30,13 +31,14 @@ public class Audio : MonoBehaviour
         DontDestroyOnLoad(this.gameObject);
     }
 
-    void Start()
-    {
-       
-    }
-
     // Update is called once per frame
     void Update()
     {
+        if (SceneManager.GetActiveScene().name == "Register" || SceneManager.GetActiveScene().name == "Login" ||
+            SceneManager.GetActiveScene().name == "Story")
+        {
+            print("OKE");
+            Destroy(GameObject.FindGameObjectWithTag("AudioManager"));
+        }
     }
 }
