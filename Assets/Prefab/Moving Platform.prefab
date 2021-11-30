@@ -162,7 +162,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_SynchronizePosition: 1
   m_SynchronizeRotation: 1
-  m_SynchronizeScale: 0
+  m_SynchronizeScale: 1
   m_UseLocal: 1
 --- !u!1001 &8568455286202283819
 PrefabInstance:
@@ -190,7 +190,7 @@ PrefabInstance:
     - target: {fileID: 5989392669884157711, guid: 1a634f4151870ec4fafb67b8216e6ff3,
         type: 3}
       propertyPath: m_LocalScale.y
-      value: 0.2647
+      value: 0.2
       objectReference: {fileID: 0}
     - target: {fileID: 5989392669884157711, guid: 1a634f4151870ec4fafb67b8216e6ff3,
         type: 3}

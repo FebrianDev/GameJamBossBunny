@@ -4,12 +4,11 @@ using UnityEngine;
 
 public class MovingPlatform : MonoBehaviour
 {
-    private float speed = 5;
+    private float speed = 1f;
 
-    // Start is called before the first frame update
-    void Start()
+    private void Start()
     {
-        
+        transform.localScale = new Vector3(1.2f, 1, 1);
     }
 
     // Update is called once per frame

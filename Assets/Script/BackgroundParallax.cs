@@ -15,7 +15,7 @@ public class BackgroundParallax : MonoBehaviour
     {
         foreach (var b in bg)
         {
-            b.localPosition = Vector3.MoveTowards(b.localPosition, new Vector3(0.5f,2.866188f, 0.5318106f), 0.1f);
+            b.localPosition = Vector3.MoveTowards(b.localPosition, new Vector3(0.5f,2.866188f, 0.5318106f), .01f);
 
             if (b.localPosition.x <= 0.5)
             {

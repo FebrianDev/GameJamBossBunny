@@ -1,31 +1,24 @@
 ﻿using UnityEngine.Audio;
 using System;
 using UnityEngine;
+using UnityEngine.SceneManagement;
+using Photon.Pun;
 
-public class AudioManager : MonoBehaviour
+public class AudioManager : MonoBehaviourPunCallbacks
 {
 	public static AudioManager instance;
 	// List of the sound
 	public Sound[] sounds;
 	// Sound is on or not
-	public static bool soundIsOn = true;
+	public static bool soundIsOn;
 	// Ui Button
 	[SerializeField] private GameObject turnOffSoundButton;
 	[SerializeField] private GameObject turnOnSoundButton;
 
+	[SerializeField] private bool TurnOnBGM;
+
 	void Awake()
 	{
-		// So the song will continue (singleton pattern)
-		if (instance != null)
-		{
-			Destroy(gameObject);
-		}
-		else
-		{
-			instance = this;
-			DontDestroyOnLoad(gameObject);
-		}
-
 		// Add audio source each sound object
 		foreach (Sound s in sounds)
 		{
@@ -34,9 +27,17 @@ public class AudioManager : MonoBehaviour
 			s.source.loop = s.loop;
 			s.source.playOnAwake = false;
 		}
+
+		var check = PlayerPrefs.GetInt(Constant.KEY_SOUND, 0);
+		soundIsOn = (check == 0) ? true : false;
+
+        if (TurnOnBGM)
+        {
+			Play("BGM");
+        }
 	}
 
-	public void CheckUI()
+    public void CheckUI()
     {
 		// Check ui is empty or not
         if (turnOffSoundButton == null)
@@ -90,6 +91,7 @@ public class AudioManager : MonoBehaviour
 	}
 
 	// This method is to play sound
+	[PunRPC]
 	public void Play(string sound)
 	{
 		// Only if sound is turned on
@@ -121,6 +123,7 @@ public class AudioManager : MonoBehaviour
 	}
 
 	// Method to stop sound
+	[PunRPC]
 	public void Stop(string sound)
 	{
 		if (soundIsOn)

@@ -35,7 +35,7 @@ public class Audio : MonoBehaviour
     void Update()
     {
         if (SceneManager.GetActiveScene().name == "Register" || SceneManager.GetActiveScene().name == "Login" ||
-            SceneManager.GetActiveScene().name == "Story")
+            SceneManager.GetActiveScene().name == "Story" || SceneManager.GetActiveScene().name == "Scene-1_Gameplay")
         {
             print("OKE");
             Destroy(GameObject.FindGameObjectWithTag("AudioManager"));

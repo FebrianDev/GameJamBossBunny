@@ -10,7 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 327950946266545880}
   - component: {fileID: 327950946266545881}
-  - component: {fileID: 6805908167640935295}
+  - component: {fileID: 8118287068075916669}
   m_Layer: 0
   m_Name: PlanetHijau
   m_TagString: Untagged
@@ -83,7 +83,7 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
---- !u!95 &6805908167640935295
+--- !u!95 &8118287068075916669
 Animator:
   serializedVersion: 3
   m_ObjectHideFlags: 0
@@ -93,7 +93,7 @@ Animator:
   m_GameObject: {fileID: 327950946266545831}
   m_Enabled: 1
   m_Avatar: {fileID: 0}
-  m_Controller: {fileID: 9100000, guid: 4ec64f763a4f02d40a38a8375556dbf2, type: 2}
+  m_Controller: {fileID: 9100000, guid: f2d551a3a6cb4494b9b3da44b68dcef3, type: 2}
   m_CullingMode: 0
   m_UpdateMode: 0
   m_ApplyRootMotion: 0

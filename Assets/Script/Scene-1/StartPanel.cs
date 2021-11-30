@@ -13,14 +13,17 @@ public class StartPanel : MonoBehaviourPunCallbacks
 
     [SerializeField] private GameObject[] buttonGroups;
     [SerializeField] private bool[] isSelected;
-    private int selectedSkin;
+    public int selectedSkin;
 
     // Game Manager
     private GameManager manager;
 
     // Color button
-    private Color selectedColor = new Color(1, 1, 1, 130 / 225f);
-    private Color unSelectedColor = new Color(1, 1, 1, 1);
+    private float selectedColor = 130 / 225f;
+    private float unSelectedColor = 1;
+
+    // Avatar
+    [SerializeField] private Image avatarImage;
 
     void Start()
     {
@@ -69,16 +72,9 @@ public class StartPanel : MonoBehaviourPunCallbacks
         }
     }
 
-    public void StartButtonMethod()
-    {
-        // Start The Games
-        photonView.RPC("StartGames", RpcTarget.All);
-        // Close the room
-        PhotonNetwork.CurrentRoom.IsVisible = false;
-        PhotonNetwork.CurrentRoom.IsOpen = false;
-    }
     public void StartGames()
     {
+        manager.selectedAvatar = selectedSkin;
         photonView.RPC("StartGamesOnline", RpcTarget.All);
     }
     [PunRPC]
@@ -88,7 +84,15 @@ public class StartPanel : MonoBehaviourPunCallbacks
         Debug.Log("Start Games");
 
         // Spawn Player
-        manager.SpawnPlayer();
+        manager.SpawnPlayer(selectedSkin);
+
+        if (PhotonNetwork.IsMasterClient)
+        {
+            manager.SpawnMovingPlatform();
+            // Close the room
+            PhotonNetwork.CurrentRoom.IsVisible = false;
+            PhotonNetwork.CurrentRoom.IsOpen = false;
+        }
 
         // Start Games
         manager.StartGames();
@@ -105,16 +109,18 @@ public class StartPanel : MonoBehaviourPunCallbacks
             isSelected[oldButton] = false;
         }
         isSelected[newButton] = true;
+        avatarImage.sprite = manager.avatar[newButton];
 
         for (int i = 0; i < buttonGroups.Length; i++)
         {
+            Color color = buttonGroups[i].GetComponent<Image>().color;
             if (isSelected[i])
             {
-                buttonGroups[i].GetComponent<Image>().color = selectedColor;
+                buttonGroups[i].GetComponent<Image>().color = new Color(color.r, color.g, color.b, selectedColor);
             }
             else
             {
-                buttonGroups[i].GetComponent<Image>().color = unSelectedColor;
+                buttonGroups[i].GetComponent<Image>().color = new Color(color.r, color.g, color.b, unSelectedColor);
             }
         }
         
@@ -143,14 +149,14 @@ public class StartPanel : MonoBehaviourPunCallbacks
         for (int i = 0; i < isSelected.Length; i++)
         {
             this.isSelected[i] = isSelected[i];
-
+            Color color = buttonGroups[i].GetComponent<Image>().color;
             if (isSelected[i])
             {
-                buttonGroups[i].GetComponent<Image>().color = selectedColor;
+                buttonGroups[i].GetComponent<Image>().color = new Color(color.r, color.g, color.b, selectedColor);
             }
             else
             {
-                buttonGroups[i].GetComponent<Image>().color = unSelectedColor;
+                buttonGroups[i].GetComponent<Image>().color = new Color(color.r, color.g, color.b, unSelectedColor);
             }
         }
     }

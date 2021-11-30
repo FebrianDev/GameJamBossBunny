@@ -28,7 +28,7 @@ public class GameManager : MonoBehaviourPunCallbacks
     public Image HitButtonLoading;
 
     // Prefabs
-    [SerializeField] private GameObject playerPrefab;
+    [SerializeField] private GameObject[] playerPrefabs;
 
     // Timer
     public static bool GameIsRolling;
@@ -43,6 +43,10 @@ public class GameManager : MonoBehaviourPunCallbacks
     // Crown
     [SerializeField] private GameObject movingPlatform;
     [SerializeField] private Transform movingPlatformSpawnPoint;
+
+    // Avatar
+    public Sprite[] avatar;
+    public int selectedAvatar;
 
     void Start()
     {
@@ -64,12 +68,6 @@ public class GameManager : MonoBehaviourPunCallbacks
         {
             PlayerUIisSelected[i] = false;
         }
-
-        // Spawn moving platform
-        if (PhotonNetwork.IsMasterClient)
-        {
-            PhotonNetwork.Instantiate(movingPlatform.name, movingPlatformSpawnPoint.position, Quaternion.identity);
-        }
     }
 
     void Update()
@@ -87,13 +85,18 @@ public class GameManager : MonoBehaviourPunCallbacks
     }
 
     // Spawning Player
-    public void SpawnPlayer()
+    public void SpawnPlayer(int playerID)
     {
-        SpawnPlayer(new Vector3(0, 0, 0));
+        SpawnPlayer(new Vector3(0, 0, 0), playerID);
     }
-    public void SpawnPlayer(Vector3 position)
+    public void SpawnPlayer(Vector3 position, int playerID)
     {
-        PhotonNetwork.Instantiate(playerPrefab.name, position, Quaternion.identity, 0);
+        Debug.Log("Spawn Player : " + playerID);
+        PhotonNetwork.Instantiate(playerPrefabs[playerID].name, position, Quaternion.identity, 0);
+    }
+    public void SpawnMovingPlatform()
+    {
+        PhotonNetwork.Instantiate(movingPlatform.name, movingPlatformSpawnPoint.position, Quaternion.identity);
     }
 
     // Staring Games
@@ -259,6 +262,6 @@ public class GameManager : MonoBehaviourPunCallbacks
 
     public override void OnLeftRoom()
     {
-        SceneManager.LoadScene("Scene-0_PlayMenu");
+        SceneManager.LoadScene("MainMenu");
     }
 }

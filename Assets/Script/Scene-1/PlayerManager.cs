@@ -39,9 +39,10 @@ public class PlayerManager : MonoBehaviourPunCallbacks
     private bool hitIsCooldown;
 
     // King Mechanic
-    private float MaxKingTime = 60f;
+    private float MaxKingTime = 2f;
     public bool IsKing { get; private set; }
     public float kingTime { get; private set; }
+    [SerializeField] private GameObject myCrown;
 
     // Player UI
     PlayerUIGroub uIGroub;
@@ -49,6 +50,12 @@ public class PlayerManager : MonoBehaviourPunCallbacks
 
     // Just in case leave room
     private bool isDestroy;
+
+    // Animation
+    Animator animator;
+
+    // Canvas
+    [SerializeField] private Canvas myCanvas;
 
     void Start()
     {
@@ -80,6 +87,7 @@ public class PlayerManager : MonoBehaviourPunCallbacks
         GameObject uiTemp = manager.PlayersUI[PlayerUID];
         uiTemp.SetActive(true);
         uIGroub = uiTemp.GetComponent<PlayerUIGroub>();
+        uIGroub.playerImage.sprite = manager.avatar[manager.selectedAvatar];
         uIGroub.playerNameText.text = photonView.Owner.NickName;
         uIGroub.kingLogo.SetActive(false);
         uIGroub.kingProgressText.text = "0 %";
@@ -114,7 +122,11 @@ public class PlayerManager : MonoBehaviourPunCallbacks
 
             // Sync data
             StartCoroutine(SyncUI());
-        }       
+        }
+
+        animator = GetComponent<Animator>();
+
+        transform.position = new Vector3(transform.position.x, transform.position.y, -2);
     }
     
     void Update()
@@ -130,11 +142,13 @@ public class PlayerManager : MonoBehaviourPunCallbacks
                 {
                     isFacingRight = false;
                     transform.localScale = new Vector3(transform.localScale.x * -1, transform.localScale.y, transform.localScale.z);
+                    myCanvas.GetComponent<RectTransform>().localScale = new Vector3(-.001f, .001f, .001f);
                 }
                 else if (joystick.Horizontal > 0 && !isFacingRight)
                 {
                     isFacingRight = true;
                     transform.localScale = new Vector3(transform.localScale.x * -1, transform.localScale.y, transform.localScale.z);
+                    myCanvas.GetComponent<RectTransform>().localScale = new Vector3(.001f, .001f, .001f);
                 }
             }
             else
@@ -147,6 +161,7 @@ public class PlayerManager : MonoBehaviourPunCallbacks
                     {
                         isFacingRight = false;
                         transform.localScale = new Vector3(transform.localScale.x * -1, transform.localScale.y, transform.localScale.z);
+                        myCanvas.GetComponent<RectTransform>().localScale = new Vector3(-.001f, .001f, .001f);
                     }
                 }
                 else if (rightButton.isPressed)
@@ -157,12 +172,26 @@ public class PlayerManager : MonoBehaviourPunCallbacks
                     {
                         isFacingRight = true;
                         transform.localScale = new Vector3(transform.localScale.x * -1, transform.localScale.y, transform.localScale.z);
+                        myCanvas.GetComponent<RectTransform>().localScale = new Vector3(.001f, .001f, .001f);
                     }
                 }
             }
+            animator.SetFloat("Speed", Mathf.Abs(rigidbody.velocity.x));
+            if(Mathf.Abs(rigidbody.velocity.x) > .1f)
+            {
+                photonView.RPC("Play", RpcTarget.All, "Walk");
+            }
+            else
+            {
+                photonView.RPC("Stop", RpcTarget.All, "Walk");
+            }
+
             // Player Jump
             if (!isJump && jumpButton.isPressed)
             {
+                animator.SetTrigger("Jump");
+                photonView.RPC("Play", RpcTarget.All, "Jump");
+
                 isJump = true;
                 onGround = false;
                 rigidbody.AddForce(new Vector2(0, jumpForce));
@@ -180,6 +209,15 @@ public class PlayerManager : MonoBehaviourPunCallbacks
             }
         }
 
+        if (IsKing)
+        {
+            myCrown.SetActive(true);
+        }
+        else
+        {
+            myCrown.SetActive(false);
+        }
+            
         photonView.RPC("SetUI", RpcTarget.All);
         
         // Check king value
@@ -228,6 +266,9 @@ public class PlayerManager : MonoBehaviourPunCallbacks
     {
         if (!hitIsCooldown)
         {
+            animator.SetTrigger("Hit");
+            photonView.RPC("Play", RpcTarget.All, "Hit");
+
             hitIsCooldown = true;
             hitCountdown = hitCooldownTime;
 
@@ -287,6 +328,7 @@ public class PlayerManager : MonoBehaviourPunCallbacks
     [PunRPC]
     public void GetHit()
     {
+        animator.SetTrigger("Ketindih");
         getHit = true;
         StartCoroutine(GetHitCooldown());
     }
@@ -323,6 +365,8 @@ public class PlayerManager : MonoBehaviourPunCallbacks
         // Only call this if this player is local
         if (collision.collider.tag == "PlayerHead" && collision.gameObject.GetComponentInParent<PlayerManager>().IsKing)
         {
+            collision.gameObject.GetComponent<PlayerManager>().photonView.RPC("GetHit", RpcTarget.All);
+
             // Take the King
             collision.gameObject.GetComponentInParent<PlayerManager>().photonView.RPC("ResetFromKing", RpcTarget.All);
             photonView.RPC("SetToKing", RpcTarget.All);
@@ -337,10 +381,12 @@ public class PlayerManager : MonoBehaviourPunCallbacks
     // Database ---------------------------------------------------------------------------------------------------
     public void NetworkingClient_EventReceived(EventData photonEvent)
     {
+        Debug.Log("New Event");
+
         if (photonEvent.Code == GameManager.SEND_DATA_EVENT && photonView.Owner.IsLocal)
         {
             // Build the data
-            AfterMatchData.playerName = photonView.Owner.NickName;
+            AfterMatchData.playerName = PlayerPrefs.GetString(Constant.KEY_NAME);
             AfterMatchData.kingTime = kingTime;
             if (manager.AmIWin(photonView.Owner.NickName))
             {

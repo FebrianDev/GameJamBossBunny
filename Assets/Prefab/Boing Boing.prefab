@@ -70,7 +70,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e5499e9e7755df24fb03792de368584a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  boingForce: 7000
+  boingForce: 7500
 --- !u!1 &9190499854884976293
 GameObject:
   m_ObjectHideFlags: 0

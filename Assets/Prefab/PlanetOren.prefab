@@ -10,7 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 3384467443342471551}
   - component: {fileID: 3384467443342471550}
-  - component: {fileID: 1640311377158847964}
+  - component: {fileID: 5870844965376228621}
   m_Layer: 0
   m_Name: PlanetOren
   m_TagString: Untagged
@@ -83,7 +83,7 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
---- !u!95 &1640311377158847964
+--- !u!95 &5870844965376228621
 Animator:
   serializedVersion: 3
   m_ObjectHideFlags: 0
@@ -93,7 +93,7 @@ Animator:
   m_GameObject: {fileID: 3384467443342471544}
   m_Enabled: 1
   m_Avatar: {fileID: 0}
-  m_Controller: {fileID: 9100000, guid: e9572f725b542b44d91a7e98cd11fc00, type: 2}
+  m_Controller: {fileID: 9100000, guid: bbf51522eef66c74992118d0365e2554, type: 2}
   m_CullingMode: 0
   m_UpdateMode: 0
   m_ApplyRootMotion: 0
