@@ -14,8 +14,8 @@ public class PlayMenuManager : MonoBehaviourPunCallbacks
     [SerializeField] private GameObject joinRoomPanel;
 
     // Buttons
-    [SerializeField] private GameObject selectJoystickButton;
-    [SerializeField] private GameObject selectButtonButton;
+    //[SerializeField] private GameObject selectJoystickButton;
+    //[SerializeField] private GameObject selectButtonButton;
 
     // Max PLayer in 1 room
     public byte MaxPlayerInRoom { get; private set; }
@@ -47,7 +47,7 @@ public class PlayMenuManager : MonoBehaviourPunCallbacks
         MaxPlayerInRoom = 4;
 
         // Setting UI
-        SelectController();
+        //SelectController();
 
         // Scroll view
         allScrollPos = new float[3];
@@ -122,15 +122,15 @@ public class PlayMenuManager : MonoBehaviourPunCallbacks
     {
         if(value == 0)
         {
-            selectedText.text = "Create Room";
+            selectedText.text = "Make a room and invite your friends";
         }
         else if(value == 1)
         {
-            selectedText.text = "Quick Match";
+            selectedText.text = "Join a random match";
         }
         else if (value == 2)
         {
-            selectedText.text = "Join Room";
+            selectedText.text = "Join a room with a code";
         }
     }
 
@@ -142,6 +142,7 @@ public class PlayMenuManager : MonoBehaviourPunCallbacks
     }
 
     // Method For select controller
+    /*
     public void SelectController()
     {
         if (PlayerManager.isJoystick)
@@ -155,8 +156,7 @@ public class PlayMenuManager : MonoBehaviourPunCallbacks
             selectJoystickButton.SetActive(true);
             selectButtonButton.SetActive(false);
             PlayerManager.isJoystick = true;
-        }
-    }
+        }*/
 
     // Method for play button (Join Room) --------------------------------------------------------------------------
     public void QuickMatchButton()
